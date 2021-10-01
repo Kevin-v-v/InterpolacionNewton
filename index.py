@@ -8,7 +8,7 @@ class interpolacion_newton:
     def __init__(self, window):
         
         self.wind = window
-        self.wind.title = ('Interpolacion de Newton')
+        self.wind.title('Interpolacion de Newton')
 
         frame = LabelFrame(self.wind, text = 'Interpolacion con diferencias divididas de newton')
         frame.grid(row = 0, column = 0, columnspan = 3, pady = 5)
@@ -50,9 +50,10 @@ class interpolacion_newton:
             self.message2.grid(row = 9, column = 0, sticky = W + E)
         else:
             if valores_x == []:
-                self.message['text'] = 'Ingrese una cantidad de columnas válida'
-            else:
-                self.message2['text'] = 'Ingrese una cantidad de columnas válida'
+                self.message['text'] = 'Ingrese una cantidad de pares ordenados válida, Entre 2 y 9'
+                
+            else :
+                self.message2['text'] = 'Ingrese una cantidad de pares ordenados válida, Entre 2 y 9'
     def delete_last(self):
         
         self.message = ''
@@ -77,7 +78,7 @@ class interpolacion_newton:
             
     def validation_table(self, cant):
         if cant.isnumeric():
-            return int(cant) > 0
+            return int(cant) >= 2 and int(cant)<10 
         else: 
             return False
     
@@ -89,7 +90,6 @@ class interpolacion_newton:
             return False
     
     def validation_values(self):
-        lower = True
         for element in valores_y:
             try:
                 float(element.get())
@@ -108,14 +108,37 @@ class interpolacion_newton:
         if not self.validation_values():
             self.message2['text'] = 'Ingrese valores validos en los pares ordenados'
             return
+        #borrar
+        if hasattr(self, 'result'):
+            self.result.destroy()
+        self.message2['text'] = ''
         # values_x = []
         # for element in valores_x:
         #     values_x.append(float (element.get()))
         # if values_x.sort() != values_x:
         #     self.message2['text'] = 'Ingrese valores de x en orden ascendente'
         #     return
+        #Ordenamiento innecesario
+        # vector_x = []
+        # for element in valores_x:
+        #     vector_x.append(float(element.get()))
+        # vector_y = []
+        # for element in valores_y:
+        #     vector_y.append(float(element.get()))
+        # temp = vector_x
+        # vector_x.sort()
+        # if temp != vector_x:
+        #     print('not sorted')
+        #     for index, element in enumerate(temp):
+        #         new_index = vector_x.index(element)
+        #         val_temp = vector_y[new_index]
+        #         vector_y[new_index]= vector_y[index]
+        #         vector_y[index]=val_temp
+        # print(vector_x)
+        # print(vector_y)
+
         c_vec = [[0] * (self.cant+1) for i in range(self.cant)]
-        print(c_vec)
+        
         
         for i in range(0, self.cant):
             
@@ -128,7 +151,7 @@ class interpolacion_newton:
 
         print(c_vec)
         res = [0] * self.cant
-        print(res)
+        
 
         for i in range(0, self.cant):    
             for k in range(0, i):
