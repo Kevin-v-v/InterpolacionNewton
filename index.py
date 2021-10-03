@@ -14,11 +14,9 @@ class interpolacion_newton:
 
         style = ttk.Style()
 
+        style.configure('TButton', font=('calibri', 10, 'bold', 'underline'),
+                        background='red', relief="flat")
 
-        style.configure('Button', font =
-               ('calibri', 10, 'bold', 'underline'),
-                foreground = 'red')
-        
         self.frame = Frame(self.wind)
         self.frame.grid(row=0, column=0,
                         pady=(16, 0), padx=16, sticky=W+E)
@@ -39,7 +37,7 @@ class interpolacion_newton:
         self.result_button_frame.grid(
             row=4, column=0, pady=(0, 16), padx=16, sticky=W+E)
 
-        self.result_frame = Frame(self.wind)
+        self.result_frame = LabelFrame(self.wind, text="Resultado")
         self.result_frame.grid(
             row=5, column=0, pady=(0, 16), padx=16, sticky=W+E)
 
@@ -54,7 +52,7 @@ class interpolacion_newton:
         self.message = Label(self.frame, text='', fg='red')
         self.message.grid(row=1, column=0, columnspan=4, sticky=W + E)
 
-        ttk.Button(self.button_frame, text='Generar tabla', command=lambda: self.table_generator(
+        Button(self.button_frame, text='Generar tabla', bg="#7986cb", fg="white", relief="flat", command=lambda: self.table_generator(
             cantidad.get())).grid(row=0, column=0, sticky=W+E)
 
         self.wind.columnconfigure(0, weight=1)
@@ -104,6 +102,7 @@ class interpolacion_newton:
             self.exv = Entry(self.table_frame)
             self.exv.grid(row=2, column=1, padx=5, pady=5, sticky=E+W)
             self.calcB = Button(self.result_button_frame, text='Calcular',
+                                bg="#7986cb", fg="white", relief="flat",
                                 command=lambda: self.calcular(self.exv.get()))
             self.calcB.grid(row=0, column=0, sticky=W+E)
             self.message2 = Label(self.error_frame, text='', fg='red')
@@ -164,74 +163,54 @@ class interpolacion_newton:
         return True
 
     def calcular(self, x):
-        if not self.validation_x(x):
-            self.message2['text'] = 'Ingrese un valor a interpolar valido'
-            return
-        if not self.validation_values():
-            self.message2['text'] = 'Ingrese valores validos en los pares ordenados'
-            return
-        # borrar
-        if hasattr(self, 'result'):
-            self.result.destroy()
-        self.message2['text'] = ''
-        # values_x = []
-        # for element in valores_x:
-        #     values_x.append(float (element.get()))
-        # if values_x.sort() != values_x:
-        #     self.message2['text'] = 'Ingrese valores de x en orden ascendente'
-        #     return
-        # Ordenamiento innecesario
-        # vector_x = []
-        # for element in valores_x:
-        #     vector_x.append(float(element.get()))
-        # vector_y = []
-        # for element in valores_y:
-        #     vector_y.append(float(element.get()))
-        # temp = vector_x
-        # vector_x.sort()
-        # if temp != vector_x:
-        #     print('not sorted')
-        #     for index, element in enumerate(temp):
-        #         new_index = vector_x.index(element)
-        #         val_temp = vector_y[new_index]
-        #         vector_y[new_index]= vector_y[index]
-        #         vector_y[index]=val_temp
-        # print(vector_x)
-        # print(vector_y)
+        try:
+            if not self.validation_x(x):
+                self.message2['text'] = 'Ingrese un valor a interpolar valido'
+                return
+            if not self.validation_values():
+                self.message2['text'] = 'Ingrese valores validos en los pares ordenados'
+                return
+            # borrar
+            if hasattr(self, 'result'):
+                self.result.destroy()
+            self.message2['text'] = ''
+        
 
-        c_vec = [[0] * (self.cant+1) for i in range(self.cant)]
+            c_vec = [[0] * (self.cant+1) for i in range(self.cant)]
 
-        for i in range(0, self.cant):
+            for i in range(0, self.cant):
 
-            for j in range(0, self.cant):
-                current = 1
-                for k in range(0, j):
-                    current *= float(valores_x[i].get()) - \
-                        float(valores_x[k].get())
-                c_vec[i][j] = current
-            c_vec[i][j+1] = float(valores_y[i].get())
+                for j in range(0, self.cant):
+                    current = 1
+                    for k in range(0, j):
+                        current *= float(valores_x[i].get()) - \
+                            float(valores_x[k].get())
+                    c_vec[i][j] = current
+                c_vec[i][j+1] = float(valores_y[i].get())
 
-        print(c_vec)
-        res = [0] * self.cant
+            print(c_vec)
+            res = [0] * self.cant
 
-        for i in range(0, self.cant):
-            for k in range(0, i):
-                c_vec[i][self.cant] -= c_vec[i][k]*res[k]
-            res[i] = c_vec[i][self.cant] / c_vec[i][i]
+            for i in range(0, self.cant):
+                for k in range(0, i):
+                    c_vec[i][self.cant] -= c_vec[i][k]*res[k]
+                res[i] = c_vec[i][self.cant] / c_vec[i][i]
 
-        print(res)
-        func_sum = 0
+            print(res)
+            func_sum = 0
 
-        for i in range(0, self.cant):
-            current = res[i]
-            for k in range(0, i):
-                current *= float(x)-float(valores_x[k].get())
-            func_sum += current
+            for i in range(0, self.cant):
+                current = res[i]
+                for k in range(0, i):
+                    current *= float(x)-float(valores_x[k].get())
+                func_sum += current
 
-        self.result = Label(
-            self.result_frame, text='f({}) = {}'.format(x, func_sum))
-        self.result.grid(row=0, column=0)
-        print(func_sum)
+            self.result = Label(
+                self.result_frame, text='f({}) = {}'.format(x, func_sum))
+            self.result.grid(row=0, column=0, pady=16)
+            print(func_sum)
+        except:
+            self.message2['text'] = 'El par ordenado ingresado no puede ser interpolado'
 
 
 if __name__ == '__main__':
